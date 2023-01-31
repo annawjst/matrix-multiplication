@@ -1,0 +1,50 @@
+#include <iostream>
+#include <iomanip>
+#include <cstdlib>
+#include <cmath>
+#include <vector>
+#include <random>
+#include <map>
+#include<stdlib.h>
+#include <numeric>
+#include <string>
+#include <vector>
+#include<algorithm>
+
+
+using namespace std;
+
+int main() {
+    //create a random seed, such that we get new random values every time
+    srand(time(NULL));
+    //set length of columns and rows
+    int rows=2, columns=2;
+    //define a,b,c, help vector h and result vector d
+    float a[rows][columns],c[rows], b[columns], d[columns], h[columns];
+    
+    //initialize random matrix a and c
+    for(int i=0; i<rows;++i){
+        c[i]=(float)rand() / (float)RAND_MAX;
+        for(int j=0;j<columns;++j){
+            a[i][j]=(float)rand() / (float)RAND_MAX;
+        }
+    }
+    //vectorwise matrixmultiplication
+    for(int k=0; k<rows;++k){
+        //initialize kth random column of b
+        for(int i=0; i<columns;++i){
+            b[i]=(float)rand() / (float)RAND_MAX;
+        }
+        //matrix vector multiplication
+        for(int i=0; i<rows;++i){
+                for(int j=0;j<columns;++j){
+            
+                    h[i]= h[i]+ a[i][j]*b[j];
+                }
+                //multiply with c
+            d[k]= d[k]+h[i]*c[i];
+        }
+    }
+    
+    return 0;
+}
