@@ -1,0 +1,62 @@
+#install.packages("pryr")
+library(pryr)
+
+set.seed(143)
+
+time0 <- Sys.time()
+# show me memory and time
+# the function returns some indicators that can be used to build a table for final analysis
+# Vcells in gc() is memory used by vectors and Ncells the memory used by everything else
+show_me <- function(arg) {
+	m <- mem_used()
+	o <- object_size(arg)
+	t <- Sys.time()-time0
+	#print(as.list(colSums(gc())))
+	# R functions return only lists...
+	return(list(memory=m,object_size=o,time_passed=t))
+}
+df2 <- data.frame(memory=c(),object_size=c(),time=c())
+# main --------------------------------------------------------------------
+
+# build matrix of size 10^3 * 10^6
+for(n in 1:3){
+  df <- data.frame(memory=c(),object_size=c(),time=c())
+  row <- 10^(n+1)
+  col <- 10^n
+  size <- col*row
+
+# make random deviates between min and max
+      a <- runif(size,min=0, max=1)
+    # compute an empirical cumulative distribution function and plot it
+    # plot(ecdf(a))
+    # fill a matrix with these values
+    a = matrix(a,ncol=col,nrow=row)
+    df <- show_me(a)
+    
+
+    # create second matrix
+    b <- runif(size,min=0, max=1)
+    b = matrix(b,ncol=row,nrow=col)
+    df <-Map(rbind,df, show_me(b))
+    
+
+    # now we multiplicate them
+    d <- a %*% b
+    df<- Map(rbind, df,show_me(d))
+    a <- c()
+    b <- c()
+    
+    c <- runif(row,min=0, max=1)
+    #c <- matrix(c,ncol=col,nrow=1)
+    e <- d %*% c
+    df<- Map(rbind, df,show_me(e))
+    
+    
+    df <- as.data.frame(do.call(cbind, df))
+    rownames(df)<- c("a","b","a*b","a*b*c")
+    colnames(df)<-c("memory","object_size","time")
+
+    df2 <- rbind(df2,df)
+    
+    
+}
